@@ -1,7 +1,11 @@
 "use client";
+
 import SearchBar from "@/components/Searchbar";
 import axios from "axios";
 import React, { useState } from "react";
+import "./weather.css";
+import MainCard from "@/components/MainCard";
+import DailyCard from "@/components/DailyCard";
 
 interface WeatherData {
   city: string;
@@ -23,7 +27,7 @@ export default function WeatherApp() {
       return;
     }
 
-    setError(""); // Clear previous errors
+    setError("");
     try {
       const response = await axios.get("http://localhost:5000/weather", {
         params: { city },
@@ -36,24 +40,39 @@ export default function WeatherApp() {
   };
 
   return (
-    <div>
-      <h1>Weather App</h1>
+    <>
+      <div>
+        <h1>Weather App</h1>
 
-      <SearchBar city={city} setCity={setCity} onSearch={fetchWeather} />
+        <SearchBar city={city} setCity={setCity} onSearch={fetchWeather} />
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {weatherData && (
-        <div>
-          <h2>Weather in {weatherData.city}</h2>
-          <p>Current Temperature: {weatherData.current_temperature}°C</p>
-          <p>{weatherData.day_night ? "Daytime" : "Nighttime"}</p>
-          <p>Precipitation: {weatherData.precipitation} mm</p>
-          <h3>Daily Temperatures</h3>
-          <p>Max: {weatherData.daily_temp_max[0]}°C</p>
-          <p>Min: {weatherData.daily_temp_min[0]}°C</p>
-        </div>
-      )}
-    </div>
+        {weatherData && (
+          <div>
+            <div className="weather-page">
+              <MainCard
+                city={city}
+                temperature={weatherData.current_temperature}
+              />
+
+              <DailyCard
+                dailyTemperatureMax={weatherData.daily_temp_max}
+                dailyTemperatureMin={weatherData.daily_temp_min}
+              />
+            </div>
+
+            <p>{weatherData.day_night ? "Daytime" : "Nighttime"}</p>
+            <p>Precipitation: {weatherData.precipitation} mm</p>
+            <h3>Daily Temperatures</h3>
+            <p>
+              Today Max: {weatherData.daily_temp_max[0]}°C Min:{" "}
+              {weatherData.daily_temp_min[0]}°C
+            </p>
+            <p>Min: {weatherData.daily_temp_min[0]}°C</p>
+          </div>
+        )}
+      </div>
+    </>
   );
 }

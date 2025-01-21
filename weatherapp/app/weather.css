@@ -1,0 +1,18 @@
+.MainCard-container{
+    max-width: 100%;
+    border-radius: 1rem;
+    background-color: white;
+}
+
+.DailyCard-container{
+    margin-top: 2rem;
+    max-width: 24rem;
+    border-radius: 1rem;
+    background-color: white;
+}
+
+.weather-page{
+    margin: 0 auto;
+    max-width: 50rem;
+
+}
