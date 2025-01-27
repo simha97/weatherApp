@@ -40,8 +40,13 @@ app.get("/weather", async (req, res) => {
           latitude,
           longitude,
           timezone: "auto",
-          current: ["temperature_2m", "is_day", "precipitation"],
-          daily: ["temperature_2m_max", "temperature_2m_min"],
+          current: [
+            "temperature_2m",
+            "is_day",
+            "precipitation",
+            "weather_code",
+          ],
+          daily: ["temperature_2m_max", "temperature_2m_min", "weather_code"],
         },
       }
     );
@@ -49,10 +54,12 @@ app.get("/weather", async (req, res) => {
     res.json({
       city: geoResponse.data.results[0].name,
       current_temperature: weatherResponse.data.current.temperature_2m,
+      current_code: weatherResponse.data.current.weather_code,
       day_night: weatherResponse.data.current.is_day,
       precipitation: weatherResponse.data.current.precipitation,
       daily_temp_max: weatherResponse.data.daily.temperature_2m_max,
       daily_temp_min: weatherResponse.data.daily.temperature_2m_min,
+      daily_code: weatherResponse.data.daily.weather_code,
     });
   } catch (error) {
     console.error(error);

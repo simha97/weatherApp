@@ -1,14 +1,17 @@
 import React from "react";
 import "/app/weather.css";
+import GetWeatherIcon from "./GetWeatherIcon";
 
 interface DailyCardProps {
   dailyTemperatureMax: number[];
   dailyTemperatureMin: number[];
+  weather_code: number[];
 }
 
 export default function DailyCard({
   dailyTemperatureMax,
   dailyTemperatureMin,
+  weather_code,
 }: DailyCardProps) {
   const getDayNames = () => {
     const daysOfWeek = [
@@ -42,10 +45,15 @@ export default function DailyCard({
       <div className="my-2 mx-5 pb-2">
         {dayNames.map((day, index) => (
           <div key={index}>
-            <div className="grid grid-cols-3 gap-4 items-center">
-              <p className="text-m  text-black">{day}</p>
-              <p>{dailyTemperatureMax[index]}°C</p>
-              <p>{dailyTemperatureMin[index]}°C</p>
+            <div className="grid grid-cols-3 gap-12 items-center">
+              <p className="text-m text-black">{day}</p>
+              <GetWeatherIcon weather_code={weather_code[index]} />
+              <div className="flex">
+                <p>{Math.round(dailyTemperatureMax[index])}°</p>
+                <p className="mx-4 text-gray-400">
+                  {Math.round(dailyTemperatureMin[index])}°
+                </p>
+              </div>
             </div>
             {index < dayNames.length - 1 && (
               <hr className="my-2 border-gray-190" />

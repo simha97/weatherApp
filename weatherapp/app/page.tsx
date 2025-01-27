@@ -1,8 +1,8 @@
 "use client";
 
-import SearchBar from "@/components/Searchbar";
+import SearchBar from "@/components/Header";
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./weather.css";
 import MainCard from "@/components/MainCard";
 import DailyCard from "@/components/DailyCard";
@@ -14,6 +14,8 @@ interface WeatherData {
   precipitation: number;
   daily_temp_max: number[];
   daily_temp_min: number[];
+  current_code: number;
+  daily_code: number[];
 }
 
 export default function WeatherApp() {
@@ -21,44 +23,51 @@ export default function WeatherApp() {
   const [city, setCity] = useState("Berlin");
   const [error, setError] = useState("");
 
-  const fetchWeather = async () => {
-    if (!city) {
-      setError("Please enter a city name.");
-      return;
-    }
+  useEffect(() => {
+    const fetchWeather = async () => {
+      if (!city.trim()) {
+        setError("Please enter a city name.");
+        setWeatherData(null);
+        return;
+      }
 
-    setError("");
-    try {
-      const response = await axios.get("http://localhost:5000/weather", {
-        params: { city },
-      });
-      setWeatherData(response.data);
-    } catch (err) {
-      setError("Unable to fetch weather data for the specified city.");
-      console.error(err);
+      setError("");
+      try {
+        const response = await axios.get("http://localhost:5000/weather", {
+          params: { city },
+        });
+        setWeatherData(response.data);
+      } catch (err) {
+        setError("Unable to fetch weather data for the specified city.");
+        console.error("Error fetching weather:", err);
+      }
+    };
+
+    if (city) {
+      fetchWeather();
     }
-  };
+  }, [city]);
 
   return (
     <>
       <div>
-        <h1>Weather App</h1>
-
-        <SearchBar city={city} setCity={setCity} onSearch={fetchWeather} />
+        <SearchBar city={city} setCity={setCity} />
 
         {error && <p style={{ color: "red" }}>{error}</p>}
 
-        {weatherData && (
+        {!error && weatherData && (
           <div>
             <div className="weather-page">
               <MainCard
                 city={city}
                 temperature={weatherData.current_temperature}
+                weather_code={weatherData.current_code}
               />
 
               <DailyCard
                 dailyTemperatureMax={weatherData.daily_temp_max}
                 dailyTemperatureMin={weatherData.daily_temp_min}
+                weather_code={weatherData.daily_code}
               />
             </div>
 
@@ -70,6 +79,7 @@ export default function WeatherApp() {
               {weatherData.daily_temp_min[0]}°C
             </p>
             <p>Min: {weatherData.daily_temp_min[0]}°C</p>
+            <p>code: {weatherData.current_code}</p>
           </div>
         )}
       </div>
